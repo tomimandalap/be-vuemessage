@@ -20,6 +20,9 @@ app.use(cors())
 
 app.use(userRoute)
 
+// Set for check file
+app.use('/image', express.static('./public/img'))
+
 const server = http.createServer(app)
 
 const io = socketio(server, {

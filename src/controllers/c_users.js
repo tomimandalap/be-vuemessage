@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { modelRegister, modelCheckEmail, modelPatchUser, modelDetailUser } = require('../models/m_users')
+const { modelRegister, modelCheckEmail, modelPatchUser, modelDetailUser, modelTotalUser, modelAllUser } = require('../models/m_users')
 const jwt = require('jsonwebtoken')
 const { envJWTSECRET } = require('../helpers/env')
 const fs = require('fs')
@@ -76,6 +76,86 @@ module.exports = {
     }).catch((err) => {
       res.status(500).json({
         msg: `${err.message}`
+      })
+    })
+  },
+  readAllUser: async(req, res) => {
+    try {
+      // searching name user
+      const search = req.query.search ? req.query.search : 'name' 
+      const keyword = req.query.keyword ? req.query.keyword : ``
+      const searching = search ? `WHERE ${search.toString().toLowerCase()} LIKE '%${keyword.toString().toLowerCase()}%'` : ``
+
+      // order && metode (ASC, DESC)
+      const sort = req.query.sort ? req.query.sort : ``
+      const metode = req.query.metode ? req.query.metode : 'asc'
+      const sorting = sort ? `ORDER BY ${sort} ${metode.toString().toLowerCase()}` : ``
+
+      // pagination
+      const page = req.query.page ? req.query.page : 1
+      const limit = req.query.limit ? req.query.limit : 4
+      const start = page===1 ? 0 : (page-1)*limit
+      const pages = page ? `LIMIT ${start}, ${limit}` : ``
+
+      // total page tb user
+      const totalPage = await modelTotalUser(searching)
+
+      modelAllUser(searching, sorting, pages)
+      .then((response) => {
+        if(response.length > 0) {
+          const pagination = {
+            page: page,
+            limit: limit,
+            totalData: totalPage[0].total,
+            totalPage: Math.ceil(totalPage[0].total/limit)
+          }
+          res.status(200).json({
+            msg: 'Get all data user',
+            pagenation: pagination,
+            data: response
+          })
+        } else {
+          res.status(200).json({
+            msg: 'Oops, data not found!',
+            data: []
+          })
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({
+          msg: 'Internal server error!',
+          data: error.message
+        })
+      })
+    } catch (error) {
+      // console.log(error.message)
+      res.status(500).json({
+        msg: 'Internal server error!',
+        data: error.message
+      })
+    }
+  },
+  detailUser: (req, res) => {
+    const id = req.params.id
+    modelDetailUser(id)
+    .then((response) => {
+      if(response.length>0) {
+        res.status(200).json({
+          msg: 'Get detail user success',
+          pagination: {},
+          data: response
+        })
+      } else {
+        res.status(200).json({
+          msg: 'Oops, user not found!',
+          data: []
+        })
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        msg: 'Internal server error!',
+        data: []
       })
     })
   },
