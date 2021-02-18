@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { modelRegister, modelCheckEmail, modelPatchUser, modelDetailUser, modelTotalUser, modelAllUser } = require('../models/m_users')
+const { modelRegister, modelCheckEmail, modelPatchUser, modelDetailUser, modelTotalUser, modelAllUser} = require('../models/m_users')
 const jwt = require('jsonwebtoken')
 const { envJWTSECRET } = require('../helpers/env')
 const fs = require('fs')
@@ -140,10 +140,16 @@ module.exports = {
     modelDetailUser(id)
     .then((response) => {
       if(response.length>0) {
+        const data = {
+          id: response[0].id,
+          name: response[0].name,
+          email: response[0].email,
+          image: response[0].image
+        }
         res.status(200).json({
           msg: 'Get detail user success',
           pagination: {},
-          data: response
+          data: data
         })
       } else {
         res.status(200).json({
@@ -162,7 +168,6 @@ module.exports = {
   updateImage: async(req, res) => {
     try {
       const id = req.params.id
-      const callDetail = await modelDetailUser(id)
       const data = req.body
 
       const newData = {
@@ -171,6 +176,15 @@ module.exports = {
         email: data.email
       }
 
+      const callDetail = await modelDetailUser(id)
+      // .then((response) => {
+      //   if (response[0].image !== 'default.png') {
+      //     fs.unlinkSync(`./public/image/${response[0].image}`)
+      //   }
+      // }).catch((err) => {
+      //   console.log(err)
+      // })
+
       if (newData.name === '' || newData.email === '') {
         const locationPath = `./public/img/${req.file.filename}`
         fs.unlinkSync(locationPath)
@@ -178,11 +192,14 @@ module.exports = {
       } else {
         modelPatchUser(newData, id)
         .then((response)=>{
-          const locationPath = `./public/img/${callDetail[0].image}`
-          fs.unlinkSync(locationPath)
-          res.status(200).json({
-            msg: 'Update success!'
-          })
+          // console.log(callDetail[0].image)
+          if (callDetail[0].image !== 'default.png') {
+            const locationPath = `./public/img/${callDetail[0].image}`
+            fs.unlinkSync(locationPath)
+            res.status(200).json({
+              msg: 'Update success!'
+            })
+          }
         })
         .catch((err) => {
           res.status(500).json({
