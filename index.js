@@ -46,8 +46,9 @@ io.on('connection', (socket) => {
   })
 
   socket.on('get-list-chat', (user) => {
-    conn.query(`SELECT * FROM tb_chat WHERE (from_id='${user.from}' AND to_id='${user.to}')
-    OR (from_id='${user.to}' AND to_id='${user.from}')`, (error, result) => {
+    conn.query(`SELECT tb_chat.date, tb_chat.from_id, tb_chat.to_id, tb_chat.message, user_from.name AS from_name, user_from.image AS from_image, user_from.room_id AS from_room_id, user_to.room_id AS to_room_id FROM tb_chat LEFT JOIN tb_users AS user_from ON tb_chat.from_id = user_from.id LEFT JOIN tb_users AS user_to on tb_chat.to_id = user_to.id
+    WHERE (from_id='${user.from}' AND to_id='${user.to}') OR 
+    (from_id='${user.to}' AND to_id='${user.from}')`, (error, result) => {
       io.to(user.room_id).emit('res-get-list-chat', result)
     })
   })
@@ -57,10 +58,12 @@ io.on('connection', (socket) => {
     (from_id, to_id, message) VALUES 
     ('${data.from}','${data.to}','${data.msg}')`, (err, result) => {
 
-      conn.query(`SELECT * FROM tb_chat WHERE (from_id='${data.from}' AND to_id='${data.to}')
-      OR (from_id='${data.to}' AND to_id='${data.from}')`, (error, result) => {
-        io.to(data.from).emit('res-get-list-chat', result)
-        io.to(data.to).emit('res-get-list-chat', result)
+      conn.query(`SELECT tb_chat.date, tb_chat.from_id, tb_chat.to_id, tb_chat.message, user_from.name AS from_name, user_from.image AS from_image, user_from.room_id AS from_room_id, user_to.room_id AS to_room_id FROM tb_chat LEFT JOIN tb_users AS user_from ON tb_chat.from_id = user_from.id LEFT JOIN tb_users AS user_to on tb_chat.to_id = user_to.id
+      WHERE (from_id='${data.from}' AND to_id='${data.to}') OR 
+      (from_id='${data.to}' AND to_id='${data.from}')`, (error, result) => {
+        // console.log(result)
+        io.to(result[0].from_room_id).emit('res-get-list-chat', result)
+        io.to(result[0].to_room_id).emit('res-get-list-chat', result)
       })
 
     })
