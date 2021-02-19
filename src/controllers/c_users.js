@@ -144,7 +144,11 @@ module.exports = {
           id: response[0].id,
           name: response[0].name,
           email: response[0].email,
-          image: response[0].image
+          image: response[0].image,
+          account: response[0].account,
+          biodata: response[0].biodata,
+          latitude: response[0].latitude,
+          longitude: response[0].longitude
         }
         res.status(200).json({
           msg: 'Get detail user success',
@@ -173,7 +177,11 @@ module.exports = {
       const newData = {
         name: data.name,
         image: req.file.filename,
-        email: data.email
+        email: data.email,
+        account: data.account,
+        biodata: data.biodata,
+        latitude: data.latitude,
+        longitude: data.longitude
       }
 
       const callDetail = await modelDetailUser(id)

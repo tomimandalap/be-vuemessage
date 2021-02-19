@@ -33,7 +33,11 @@ const io = socketio(server, {
 })
 
 io.on('connection', (socket) => {
-  console.log('user connected')
+  console.log(`User connected`)
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected')
+  })
 
   socket.on('join-room', (roomId) => {
     socket.join(roomId)
