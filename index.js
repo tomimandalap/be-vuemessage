@@ -32,6 +32,8 @@ const io = socketio(server, {
   }
 })
 
+// const activeUsers = new Set();
+
 io.on('connection', (socket) => {
   console.log(`User connected`)
 
@@ -46,6 +48,21 @@ io.on('connection', (socket) => {
   socket.on('get-list-users', (data) => {
     conn.query(`SELECT * FROM tb_users WHERE id !=${data.id}`, (err, result) => {
       io.to(data.room_id).emit('res-get-list-users', result)
+    })
+  })
+
+  // send data friendship to db
+  socket.on('get-friendship', (data) => {
+    conn.query(`INSERT INTO tb_friend (from_id, to_id, status) VALUES 
+    ('${data.from_id}','${data.to_id}','${data.status}')`, (err, result) => {
+      io.to(data.room_id).emit('res-friendship', {message: 'success', data})
+    })
+  })
+
+  // send db to list friendship
+  socket.on('get-list-db', (data) => {
+    conn.query(`SELECT * FROM tb_friend`, (err, result) => {
+      io.to(data).emit('res-list-db', result)
     })
   })
 
@@ -71,6 +88,15 @@ io.on('connection', (socket) => {
       })
 
     })
+  })
+  // broadcast
+  socket.on('send-broadcast', (data) => {
+    console.log(data)
+    // socket.emit('res-broadcast', data.msg)
+    // conn.query(`SELECT * FROM tb_users WHERE id !=${data.id}`, (err, result) => {
+    //   // io.to(data.room_id).emit('res-get-list-users', result)
+    //   console.log(result)
+    // })
   })
 })
 
