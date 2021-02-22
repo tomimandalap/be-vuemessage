@@ -47,6 +47,8 @@ DBHOST= localhost
 DBUSER= root
 DBPASS= 
 DB    = nama_databasenya
+PORT = 3000
+keyJWT = xxxx
 ```
   
 Untuk pengguna OS windows biasanya bagian passowd di xampp itu kosong, tetapi pengguna Mac silahakn isi passwordnya.
