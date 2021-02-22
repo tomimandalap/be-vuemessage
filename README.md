@@ -39,8 +39,9 @@ Tugas membuat realtime chat dan map untuk hasil dalam bentuk website [Chating](h
 1. Silahkan download file ini.
 2. Silahkan buka file ini dalam satu folder di text editor  seperti VS Code atau sejenisnya
 3. Pastikan import database yang ada didalam file ```MySql``` sebagai database di MySql
-4. Patikan isi ``` PORT ``` yang akan kamu gunakan di file ``` .env ``` sesuaikan juga dengan yang ada di ``` app.listen ``` pada file ``` app.js ```
-5. Silahkan ganti nama database, user dan password pada file ``` .env ``` sesuai dengan MySql kalian. Umumnya seperti berikut:
+4. Silahkan ```CREATE``` file ```.env``` lalu buka file tersebut
+5. Patikan isi ``` PORT ``` yang akan kamu gunakan di file ``` .env ``` sesuaikan juga dengan yang ada di ``` app.listen ``` pada file ``` app.js ```
+6. Silahkan ganti nama database, user dan password pada file ``` .env ``` sesuai dengan MySql kalian. Umumnya seperti berikut:
 ```
 DBHOST= localhost
 DBUSER= root
