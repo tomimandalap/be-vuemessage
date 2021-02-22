@@ -1,6 +1,6 @@
 # be-vuemessage
 
-Tugas membuat realtime chat dan map untuk hasil dalam bentuk website [Chating](http://52.204.186.223:5000/). Sedangkan untuk materi presentasi [disini](https://drive.google.com/file/d/16F388kNIJV5xtcl2Pe2nBc3W6W2kaTca/view?usp=sharing).
+Tugas membuat realtime chat dan map untuk hasil dalam bentuk website [Chating](http://52.204.186.223:5000/). Sedangkan untuk bagian frotnend [klik ini](https://github.com/tomimandalap/fe-vuemessage) dan materi presentasi [disini](https://drive.google.com/file/d/16F388kNIJV5xtcl2Pe2nBc3W6W2kaTca/view?usp=sharing).
 
 ### Modules
 1. [Expressjs]
