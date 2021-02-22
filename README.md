@@ -63,6 +63,7 @@ CTRL + SHIFT + C
 ```
 Kemudian ketikan text berikut
 ```
+"npm install"
 "npm run start" //untuk menjalankan nodemon cek di file package.json
 ```
 guna untuk menjalankan project ini. Pastikan anda telah mengaktifkan XAMPP
