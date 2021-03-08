@@ -51,6 +51,14 @@ io.on('connection', (socket) => {
     })
   })
 
+  socket.on('get-list-chat', (user) => {
+    conn.query(`SELECT tb_chat.date, tb_chat.from_id, tb_chat.to_id, tb_chat.message, user_from.name AS from_name, user_from.image AS from_image, user_from.room_id AS from_room_id, user_to.room_id AS to_room_id FROM tb_chat LEFT JOIN tb_users AS user_from ON tb_chat.from_id = user_from.id LEFT JOIN tb_users AS user_to on tb_chat.to_id = user_to.id
+    WHERE (from_id='${user.from}' AND to_id='${user.to}') OR 
+    (from_id='${user.to}' AND to_id='${user.from}')`, (error, result) => {
+      io.to(user.room_id).emit('res-get-list-chat', result)
+    })
+  })
+
   // send data friendship to db
   socket.on('get-friendship', (data) => {
     conn.query(`INSERT INTO tb_friend (from_id, to_id, status) VALUES 
@@ -63,14 +71,6 @@ io.on('connection', (socket) => {
   socket.on('get-list-db', (data) => {
     conn.query(`SELECT * FROM tb_friend`, (err, result) => {
       io.to(data).emit('res-list-db', result)
-    })
-  })
-
-  socket.on('get-list-chat', (user) => {
-    conn.query(`SELECT tb_chat.date, tb_chat.from_id, tb_chat.to_id, tb_chat.message, user_from.name AS from_name, user_from.image AS from_image, user_from.room_id AS from_room_id, user_to.room_id AS to_room_id FROM tb_chat LEFT JOIN tb_users AS user_from ON tb_chat.from_id = user_from.id LEFT JOIN tb_users AS user_to on tb_chat.to_id = user_to.id
-    WHERE (from_id='${user.from}' AND to_id='${user.to}') OR 
-    (from_id='${user.to}' AND to_id='${user.from}')`, (error, result) => {
-      io.to(user.room_id).emit('res-get-list-chat', result)
     })
   })
 
@@ -97,6 +97,18 @@ io.on('connection', (socket) => {
     //   // io.to(data.room_id).emit('res-get-list-users', result)
     //   console.log(result)
     // })
+  })
+  // list chat
+  socket.on('get-data-end', (data) => {
+    conn.query(`SELECT tb_chat.id, tb_chat.from_id, tb_chat.to_id, tb_chat.message, tb_chat.date, user_from.name AS from_name, user_to.name AS to_name, user_from.room_id AS from_roomid, user_to.room_id AS to_roomid FROM tb_chat LEFT JOIN tb_users AS user_from ON tb_chat.from_id = user_from.id LEFT JOIN tb_users AS user_to ON tb_chat.to_id = user_to.id
+    WHERE (tb_chat.from_id = ${data.from_id} AND tb_chat.to_id = ${data.to_id}) OR (tb_chat.from_id = ${data.to_id} AND tb_chat.to_id = ${data.from_id}) ORDER BY tb_chat.id DESC`, (err, result) => {
+      if(result[0] !== undefined) {
+        io.to(result[0].from_roomid).emit('res-data-end', result[0])
+        io.to(result[0].to_roomid).emit('res-data-end', result[0])
+      } else {
+        io.to(data.room_id).emit('res-data-end', 'null')
+      }
+    })
   })
 })
 
