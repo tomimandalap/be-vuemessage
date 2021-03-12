@@ -72,3 +72,6 @@ Kemudian ketikan text berikut
 guna untuk menjalankan project ini. Pastikan anda telah mengaktifkan XAMPP
 
 ---
+
+##Frontend
+Silahkan klik [disini](https://github.com/tomimandalap/fe-vuemessage)
